@@ -2,7 +2,7 @@ import { IsNotEmpty, IsPositive } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
-  fullName: string;
+  name: string;
   @IsPositive()
   age: number;
   @IsNotEmpty()
@@ -13,7 +13,7 @@ export class CreateUserDto {
 
 export class UpdateUserDto {
   @IsNotEmpty()
-  fullName?: string;
+  name?: string;
   @IsPositive()
   age?: number;
   @IsNotEmpty()
