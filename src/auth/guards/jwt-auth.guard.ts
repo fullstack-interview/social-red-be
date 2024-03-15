@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  // canActivate(
-  //   context: ExecutionContext,
-  // ): boolean | Promise<boolean> | Observable<boolean> {
-  //   // const request = context.switchToHttp().getRequest();
-  //   // console.log(
-  //   //   '🚀 ~ JwtAuthGuard ~ classJwtAuthGuardextendsAuthGuard ~ request:',
-  //   //   request,
-  //   // );
-  //   return true;
-  // }
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const req = context.switchToHttp().getRequest();
+
+    const { authorization } = req.headers;
+
+    return !!authorization;
+  }
 }

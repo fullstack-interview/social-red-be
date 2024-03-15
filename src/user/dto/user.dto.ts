@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive } from 'class-validator';
+import { IsArray, IsNotEmpty, IsPositive } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -20,4 +20,7 @@ export class UpdateUserDto {
   email?: string;
   @IsNotEmpty()
   password?: string;
+  @IsArray()
+  @IsNotEmpty()
+  posts?: string[];
 }

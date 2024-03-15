@@ -1,35 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOneOptionsDto } from 'classes/findone-options.dto';
+import { PageDto } from 'classes/page.dto';
+import { SearchOptionsDto } from 'classes/search-options.dto';
+import {
+  getFindOneOptions,
+  getPaginatedSearchResult,
+} from 'helpers/query-builder.helper';
+import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/user.dto';
-import { User, UserDocument } from './schema/user.schema';
+import { User } from './schema/user.schema';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private userModule: Model<UserDocument>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async findAll() {
-    const users = this.userModule.find();
-    return users;
+  async findAll(searchOptionsDto: SearchOptionsDto): Promise<PageDto<User>> {
+    return getPaginatedSearchResult(searchOptionsDto, this.userRepository);
   }
 
-  async findOne(id: string) {
-    const user = await this.userModule.findById(id);
-    return user;
+  async findOne(id: string, findOneOptionsDto?: FindOneOptionsDto) {
+    const options = getFindOneOptions({ id }, findOneOptionsDto);
+
+    return this.userRepository.findOne(options);
   }
 
-  async update(updateUser: UpdateUserDto, id: string) {
-    const updatedUser = await this.userModule.findByIdAndUpdate(
-      { _id: id },
-      updateUser,
+  async update(updateUserDto: UpdateUserDto, id: string) {
+    return this.userRepository.update(
+      {
+        id,
+      },
+      updateUserDto,
     );
-    return updatedUser;
   }
 
   async delete(id: string) {
-    const deletedUser = await this.userModule.deleteOne({ _id: id });
-    return deletedUser;
+    return this.userRepository.delete({ id });
   }
 }

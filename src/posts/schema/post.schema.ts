@@ -5,22 +5,22 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('user')
-export class User {
+@Entity('post')
+export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true })
-  full_name: string;
-
-  @Column({ unique: true, nullable: true })
-  email: string;
-
-  @Column()
-  age: number;
+  title: string;
 
   @Column({ nullable: true })
-  password: string;
+  content: string;
+
+  @Column({ nullable: true, default: 0 })
+  likes: number;
+
+  @Column({ nullable: true })
+  user_id: string;
 
   @CreateDateColumn({
     type: 'timestamp without time zone',

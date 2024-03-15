@@ -1,24 +1,19 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../user/schema/user.schema';
+import { User } from '../user/schema/user.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtContants } from 'src/auth/constants/jwt.constants';
+import { JWT_SECRET_KEY, JWT_EXPIRATION_TIME } from 'src/config';
 import { JwtStrategy } from './jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      {
-        name: User.name,
-        schema: UserSchema,
-      },
-    ]),
+    TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: jwtContants.secret,
+      secret: JWT_SECRET_KEY,
       signOptions: {
-        expiresIn: '24h',
+        expiresIn: JWT_EXPIRATION_TIME,
       },
     }),
   ],
