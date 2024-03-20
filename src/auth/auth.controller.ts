@@ -15,8 +15,8 @@ export class AuthController {
   }
 
   @Post('login')
-  loginUser(@Res() res, @Body() userObject: LoginAuthDto) {
-    const response = this.authService.login(userObject);
+  async loginUser(@Res() res, @Body() userObject: LoginAuthDto) {
+    const response = await this.authService.login(userObject);
     return res.status(HttpStatus.OK).json(response);
   }
 }
