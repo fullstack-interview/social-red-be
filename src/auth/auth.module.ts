@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JWT_EXPIRATION_TIME, JWT_SECRET_KEY } from 'src/config';
+import { User } from '../user/schema/user.schema';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { User } from '../user/schema/user.schema';
-import { JwtModule } from '@nestjs/jwt';
-import { JWT_SECRET_KEY, JWT_EXPIRATION_TIME } from 'src/config';
 import { JwtStrategy } from './jwt.strategy';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [

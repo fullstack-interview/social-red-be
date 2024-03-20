@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -15,7 +15,8 @@ export class AuthController {
   }
 
   @Post('login')
-  loginUser(@Body() userObject: LoginAuthDto) {
-    return this.authService.login(userObject);
+  loginUser(@Res() res, @Body() userObject: LoginAuthDto) {
+    const response = this.authService.login(userObject);
+    return res.status(HttpStatus.OK).json(response);
   }
 }

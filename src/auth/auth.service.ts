@@ -28,26 +28,26 @@ export class AuthService {
 
   async login(userObject: LoginAuthDto) {
     const { email, password } = userObject;
-    const findUser = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: {
         email,
       },
     });
 
-    if (!findUser) throw new NotFoundException('USER_NOT_FOUND');
+    if (!user) throw new NotFoundException('USER_NOT_FOUND');
 
-    const checkPassword = await compare(password, findUser.password);
+    const checkPassword = await compare(password, user.password);
 
     if (!checkPassword) throw new HttpException('PASSWORD_INCORRECT', 403);
 
     const token = await this.jwtAuthService.sign({
-      id: findUser.id,
-      name: findUser.full_name,
-      email: findUser.email,
+      id: user.id,
+      name: user.full_name,
+      email: user.email,
     });
 
     const data = {
-      findUser,
+      user,
       token,
     };
 
