@@ -10,8 +10,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  registerUser(@Body() userObject: RegisterAuthDto) {
-    return this.authService.register(userObject);
+  async registerUser(@Res() res, @Body() userObject: RegisterAuthDto) {
+    const response = await this.authService.register(userObject);
+    return res.status(HttpStatus.OK).json(response);
   }
 
   @Post('login')

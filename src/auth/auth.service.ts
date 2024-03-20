@@ -2,7 +2,6 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
-import { UserPayload } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/schema/user.schema';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -16,14 +15,33 @@ export class AuthService {
     private jwtAuthService: JwtService,
   ) {}
 
-  async register(userObject: RegisterAuthDto): Promise<UserPayload> {
-    const { password } = userObject;
+  async register(userObject: RegisterAuthDto) {
+    const { password, email } = userObject;
+
     const plainToHash = await hash(password, 10);
+
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (user) throw new HttpException('EMAIL_IN_USE', 403);
+
     userObject = { ...userObject, password: plainToHash };
 
-    const createdUser = this.userRepository.save(userObject);
+    const createdUser = await this.userRepository.save(userObject);
 
-    return createdUser as UserPayload;
+    const token = await this.jwtAuthService.sign({
+      id: createdUser.id,
+      full_name: createdUser.full_name,
+      email: createdUser.email,
+    });
+
+    return {
+      token,
+      user: createdUser,
+    };
   }
 
   async login(userObject: LoginAuthDto) {
@@ -42,7 +60,7 @@ export class AuthService {
 
     const token = await this.jwtAuthService.sign({
       id: user.id,
-      name: user.full_name,
+      full_name: user.full_name,
       email: user.email,
     });
 
